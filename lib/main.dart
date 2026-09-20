@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'screens/beranda.dart';
 import 'screens/login.dart';
 import 'screens/riwayat.dart';
+import 'screens/pembayaran.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,12 +24,14 @@ class MyApp extends StatelessWidget {
       ),
 
       // Halaman pertama yang dibuka
-      initialRoute: '/Login',
+      initialRoute: '/Pembayaran',
 
       // Daftar semua halaman
       routes: {
+        '/Beranda': (context) => const Beranda(),
         '/Login': (context) => const Login(),
         '/Riwayat': (context) => const Riwayat(),
+        '/Pembayaran': (context) => const Pembayaran(),
       },
     );
   }
