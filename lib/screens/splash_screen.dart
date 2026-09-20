@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+class Splash_Screen extends StatelessWidget {
+  const Splash_Screen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class SplashScreen extends StatelessWidget {
 
                 // Logo Rentigo
                 Image.asset(
-                  'assets/images/logo_rentigo.png',
+                  'assets/images/logo.png',
                   width: 88,
                   height: 88,
                   fit: BoxFit.contain,
