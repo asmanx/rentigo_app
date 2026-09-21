@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rentigo_app/screens/spesifikasi_motor.dart';
 
 import 'screens/beranda.dart';
 import 'screens/login.dart';
