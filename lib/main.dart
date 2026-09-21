@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rentigo_app/screens/spesifikasi_motor.dart';
 
 import 'screens/beranda.dart';
 import 'screens/login.dart';
@@ -6,6 +7,12 @@ import 'screens/riwayat.dart';
 import 'screens/pembayaran.dart';
 import 'screens/form_pemesanan.dart';
 import 'screens/splash_screen.dart';
+import 'screens/spesifikasi_motor.dart';
+import 'screens/spesifikasi_mobil.dart';
+import 'screens/mobil_page.dart';
+import 'screens/motor_page.dart';
+import 'screens/profile.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +43,11 @@ class MyApp extends StatelessWidget {
         '/Pembayaran': (context) => const Pembayaran(),
         '/Form_Pemesanan': (context) => const Form_Pemesanan(),
         '/Splash_Screen': (context) => const Splash_Screen(),
+        '/Spesifikasi_Motor': (context) => const Spesifikasi_Motor(),
+        '/Spesifikasi_Mobil': (context) => const Spesifikasi_Mobil(),
+        '/Mobil_Page': (context) => const Mobil_page(),
+        '/Motor_Page': (context) => const Motor_page(),
+        '/Profile': (context) => const Profil(),
       },
     );
   }

@@ -1,45 +1,134 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-// =========================
-// APLIKASI UTAMA
-// =========================
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Mobil_page extends StatelessWidget {
+  const Mobil_page({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Rental Kendaraan',
-      home: const MobilPage(),
-    );
+    return const MobilPage();
   }
 }
 
-// =========================
-// HALAMAN UTAMA
-// =========================
-class MobilPage extends StatelessWidget {
+class MobilPage extends StatefulWidget {
   const MobilPage({super.key});
+
+  @override
+  State<MobilPage> createState() => _MobilPageState();
+}
+
+class _MobilPageState extends State<MobilPage> {
+  final TextEditingController searchController = TextEditingController();
+
+  final List<Map<String, String>> vehicles = [
+    {
+      'image': 'assets/images/Mercedes-Benz C 200.png',
+      'name': 'MERCEDES-BENZ C 200',
+      'price': 'Rp750.000/hari',
+    },
+    {
+      'image': 'assets/images/mazda3_hatchback.png',
+      'name': 'MAZDA 3 HATCHBACK',
+      'price': 'Rp600.000/hari',
+    },
+    {
+      'image': 'assets/images/hyundai_palisade.png',
+      'name': 'HYUNDAI PALISADE',
+      'price': 'Rp500.000/hari',
+    },
+    {
+      'image': 'assets/images/BMWM4.png',
+      'name': 'BMW M4',
+      'price': 'Rp750.000/hari',
+    },
+    {
+      'image': 'assets/images/fortuner.webp',
+      'name': 'TOYOTA FORTUNER',
+      'price': 'Rp500.000/hari',
+    },
+    {
+      'image': 'assets/images/chery_tiggo9.png',
+      'name': 'CHERY TIGGO 9 CSH',
+      'price': 'Rp400.000/hari',
+    },
+    {
+      'image': 'assets/images/avanza.png',
+      'name': 'TOYOTA AVANZA',
+      'price': 'Rp350.000/hari',
+    },
+    {
+      'image': 'assets/images/innova_reborn.png',
+      'name': 'TOYOTA INNOVA REBORN',
+      'price': 'Rp350.000/hari',
+    },
+  ];
+
+  List<Map<String, String>> filteredVehicles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredVehicles = vehicles;
+    searchController.addListener(filterVehicles);
+  }
+
+  void filterVehicles() {
+    final query = searchController.text.toLowerCase().trim();
+
+    setState(() {
+      if (query.isEmpty) {
+        filteredVehicles = vehicles;
+      } else {
+        filteredVehicles = vehicles.where((vehicle) {
+          return vehicle['name']!.toLowerCase().contains(query);
+        }).toList();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void goToMotor() {
+    Navigator.pushNamed(context, '/Motor_Page');
+  }
+
+  void goToHome() {
+    Navigator.pushNamedAndRemoveUntil(context, '/Beranda', (route) => false);
+  }
+
+  void goToHistory() {
+    Navigator.pushNamed(context, '/Riwayat');
+  }
+
+  void goToProfile() {
+    Navigator.pushNamed(context, '/Profile');
+  }
+
+  void openVehicleDetail(Map<String, String> vehicle) {
+    Navigator.pushNamed(context, '/Spesifikasi_Mobil');
+  }
+
+  void showMicMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Fitur pencarian suara belum tersedia.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffEAF2F8),
-
+      backgroundColor: const Color(0xFFEAF2F8),
       body: SafeArea(
         child: Column(
           children: [
-            // =========================
-            // HEADER
-            // =========================
             Container(
               height: 141.62,
-
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/sewa_motor.png'),
@@ -47,77 +136,65 @@ class MobilPage extends StatelessWidget {
                   alignment: Alignment(0, 0.7),
                 ),
               ),
-
               child: Column(
                 children: [
-                  // =========================
-                  // SEARCH BAR
-                  // =========================
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
-
                     child: Container(
                       height: 42,
-
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
-
                       child: Row(
                         children: [
                           const SizedBox(width: 12),
-
-                          // ICON SEARCH
                           const Icon(
                             Icons.search,
                             size: 20,
                             color: Colors.black54,
                           ),
-
                           const SizedBox(width: 8),
-
-                          // TEXT SEARCH
-                          const Expanded(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13,
+                          Expanded(
+                            child: TextField(
+                              controller: searchController,
+                              decoration: const InputDecoration(
+                                hintText: 'Search',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 13,
+                                ),
+                                border: InputBorder.none,
+                                isDense: true,
                               ),
+                              style: const TextStyle(fontSize: 13),
                             ),
                           ),
-
-                          // ICON MICROPHONE
-                          const Icon(
-                            Icons.mic_none,
-                            size: 20,
-                            color: Colors.black54,
+                          GestureDetector(
+                            onTap: showMicMessage,
+                            child: const Icon(
+                              Icons.mic_none,
+                              size: 20,
+                              color: Colors.black54,
+                            ),
                           ),
-
                           const SizedBox(width: 12),
-
-                          // ICON CART
-                          const Icon(
-                            Icons.shopping_cart_outlined,
-                            size: 20,
-                            color: Colors.black54,
+                          GestureDetector(
+                            onTap: goToHistory,
+                            child: const Icon(
+                              Icons.shopping_cart_outlined,
+                              size: 20,
+                              color: Colors.black54,
+                            ),
                           ),
-
                           const SizedBox(width: 12),
                         ],
                       ),
                     ),
                   ),
-
                   const Spacer(),
-
-                  // =========================
-                  // PILIHAN MOTOR / MOBIL
-                  // =========================
                   Container(
                     height: 38,
-
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
@@ -125,32 +202,44 @@ class MobilPage extends StatelessWidget {
                         colors: [Colors.transparent, Color(0xFF737373)],
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        // SEPEDA MOTOR
                         Expanded(
-                          child: Center(
-                            child: Text(
-                              'Sepeda Motor',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
+                          child: GestureDetector(
+                            onTap: goToMotor,
+                            child: const Center(
+                              child: Text(
+                                'Sepeda Motor',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
                         ),
-
-                        // MOBIL
                         Expanded(
-                          child: Center(
-                            child: Text(
-                              'Mobil',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Mobil',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Container(
+                                  height: 2,
+                                  width: 45,
+                                  color: const Color(0xFFFACC15),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -160,18 +249,12 @@ class MobilPage extends StatelessWidget {
                 ],
               ),
             ),
-
-            // =========================
-            // DAFTAR KENDARAAN
-            // =========================
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(15),
-
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // JUDUL
                     const Text(
                       'Daftar Kendaraan',
                       style: TextStyle(
@@ -179,149 +262,141 @@ class MobilPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
-                    // DAFTAR KARTU
                     Expanded(
-                      child: GridView.builder(
-                        itemCount: 8,
-
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: 0.72,
-                            ),
-
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 2),
+                      child: filteredVehicles.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'Kendaraan tidak ditemukan',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
                                 ),
-                              ],
-                            ),
+                              ),
+                            )
+                          : GridView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: filteredVehicles.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 12,
+                                    mainAxisSpacing: 12,
+                                    mainAxisExtent: 255,
+                                  ),
+                              itemBuilder: (context, index) {
+                                final vehicle = filteredVehicles[index];
 
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // =========================
-                                // TEMPAT GAMBAR
-                                // =========================
-                                Container(
-                                  height: 144,
-                                  width: double.infinity,
-
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(12),
+                                return GestureDetector(
+                                  onTap: () {
+                                    openVehicleDetail(vehicle);
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 5,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 125,
+                                          width: double.infinity,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF2F2F2),
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(12),
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.vertical(
+                                                  top: Radius.circular(12),
+                                                ),
+                                            child: Image.asset(
+                                              vehicle['image']!,
+                                              fit: BoxFit.contain,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                    return const Icon(
+                                                      Icons.directions_car,
+                                                      size: 40,
+                                                      color: Colors.grey,
+                                                    );
+                                                  },
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  vehicle['name']!,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                  vehicle['price']!,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFFFF0000),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                const Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 7,
+                                                      height: 7,
+                                                      child: DecoratedBox(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                              color:
+                                                                  Colors.green,
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                    Text(
+                                                      'Available',
+                                                      style: TextStyle(
+                                                        fontSize: 11,
+                                                        color: Colors.green,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-
-                                  child: Image.asset(
-                                    [
-                                      'assets/images/Mercedes-Benz C 200.png',
-                                      'assets/images/mazda3_hatchback.png',
-                                      'assets/images/hyundai_palisade.png',
-                                      'assets/images/BMWM4.png',
-                                      'assets/images/fortuner.webp',
-                                      'assets/images/chery_tiggo9.png',
-                                      'assets/images/avanza.png',
-                                      'assets/images/innova_reborn.png',
-                                    ][index],
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-
-                                // =========================
-                                // INFORMASI KENDARAAN
-                                // =========================
-                                Padding(
-                                  padding: const EdgeInsets.all(10),
-
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-
-                                    children: [
-                                      Text(
-                                        [
-                                          'MERCEDES-BENZ C 200',
-                                          'MAZDA 3 HATCHBACK',
-                                          'HYUNDAI PALISADE',
-                                          'BMW M4',
-                                          'TOYOTA FORTUNER',
-                                          'CHERY TIGGO 9 CSH',
-                                          'TOYOTA AVANZA',
-                                          'TOYOTA INNOVA REBORN',
-                                        ][index],
-
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 5),
-
-                                      Text(
-                                        [
-                                          'Rp750.000/hari',
-                                          'Rp600.000/hari',
-                                          'Rp500.000/hari',
-                                          'Rp750.000/hari',
-                                          'Rp500.000/hari',
-                                          'Rp400.000/hari',
-                                          'Rp350.000/hari',
-                                          'Rp350.000/hari',
-                                        ][index],
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFFFF0000),
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 8),
-
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 7,
-                                            height: 7,
-                                            decoration: const BoxDecoration(
-                                              color: Colors.green,
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-
-                                          const SizedBox(width: 5),
-
-                                          const Text(
-                                            'Available',
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ],
                 ),
@@ -330,62 +405,68 @@ class MobilPage extends StatelessWidget {
           ],
         ),
       ),
-
-      // =========================
-      // NAVBAR
-      // =========================
       bottomNavigationBar: Container(
         height: 65,
-        color: Colors.white,
-
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Color(0xFFEAEAEA))),
+        ),
         child: Row(
           children: [
-            // BERANDA
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.home_outlined, size: 22, color: Color(0xFFFACC15)),
-                  SizedBox(height: 3),
-                  Text(
-                    'Beranda',
-                    style: TextStyle(fontSize: 11, color: Color(0xFFFACC15)),
-                  ),
-                ],
+              child: InkWell(
+                onTap: goToHome,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.home_outlined,
+                      size: 22,
+                      color: Color(0xFFFACC15),
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      'Beranda',
+                      style: TextStyle(fontSize: 11, color: Color(0xFFFACC15)),
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            // AKTIVITAS
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.receipt_long_outlined,
-                    size: 22,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 3),
-                  Text(
-                    'Aktivitas',
-                    style: TextStyle(fontSize: 11, color: Colors.grey),
-                  ),
-                ],
+              child: InkWell(
+                onTap: goToHistory,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.receipt_long_outlined,
+                      size: 22,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      'Aktivitas',
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            // PROFILE
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.person_outline, size: 22, color: Colors.grey),
-                  SizedBox(height: 3),
-                  Text(
-                    'Profile',
-                    style: TextStyle(fontSize: 11, color: Colors.grey),
-                  ),
-                ],
+              child: InkWell(
+                onTap: goToProfile,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.person_outline, size: 22, color: Colors.grey),
+                    SizedBox(height: 3),
+                    Text(
+                      'Profile',
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -10,15 +10,63 @@ class Pembayaran extends StatefulWidget {
 class _PembayaranState extends State<Pembayaran> {
   String selectedPayment = 'E-Wallet';
 
+  void processPayment() {
+    if (selectedPayment.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Silakan pilih metode pembayaran')),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            'Pembayaran Berhasil',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF172033),
+            ),
+          ),
+          content: const Text(
+            'Pesanan kamu berhasil dibuat. Terima kasih telah menggunakan Rentigo.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/Beranda',
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                'Kembali ke Beranda',
+                style: TextStyle(
+                  color: Color(0xFFFFC800),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFEAF4FC),
-
       body: SafeArea(
         child: Column(
           children: [
-            // HEADER
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
               child: Row(
@@ -45,20 +93,14 @@ class _PembayaranState extends State<Pembayaran> {
                 ],
               ),
             ),
-
-            // CONTENT
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // KARTU KENDARAAN
                     vehicleInfoCard(),
-
                     const SizedBox(height: 18),
-
-                    // METODE PEMBAYARAN
                     const Text(
                       'Metode Pembayaran',
                       style: TextStyle(
@@ -67,59 +109,43 @@ class _PembayaranState extends State<Pembayaran> {
                         color: Color(0xFF172033),
                       ),
                     ),
-
                     const SizedBox(height: 4),
-
                     const Text(
                       'Pilih metode pembayaran yang kamu inginkan',
                       style: TextStyle(fontSize: 10, color: Colors.grey),
                     ),
-
                     const SizedBox(height: 14),
-
                     paymentOption(
                       title: 'E-Wallet',
                       subtitle: 'DANA, OVO, GoPay, ShopeePay',
                       icon: Icons.account_balance_wallet_outlined,
                     ),
-
                     const SizedBox(height: 10),
-
                     paymentOption(
                       title: 'Transfer Bank',
                       subtitle: 'BCA, BRI, BNI, Mandiri & lainnya',
                       icon: Icons.account_balance_outlined,
                     ),
-
                     const SizedBox(height: 10),
-
                     paymentOption(
                       title: 'Kartu Debit / Kredit',
                       subtitle: 'Visa, Mastercard, JCB',
                       icon: Icons.credit_card_outlined,
                     ),
-
                     const SizedBox(height: 10),
-
                     paymentOption(
                       title: 'Cash On Delivery (COD)',
                       subtitle: 'Bayar saat menerima motor',
                       icon: Icons.local_shipping_outlined,
                     ),
-
                     const SizedBox(height: 12),
-
-                    // RINCIAN PEMBAYARAN
                     paymentDetailCard(),
-
                     const SizedBox(height: 15),
-
-                    // BAYAR SEKARANG
                     SizedBox(
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: processPayment,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
@@ -147,7 +173,6 @@ class _PembayaranState extends State<Pembayaran> {
     );
   }
 
-  // KARTU INFORMASI KENDARAAN
   Widget vehicleInfoCard() {
     return Container(
       width: double.infinity,
@@ -179,9 +204,7 @@ class _PembayaranState extends State<Pembayaran> {
               fit: BoxFit.contain,
             ),
           ),
-
           const SizedBox(width: 15),
-
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -195,16 +218,12 @@ class _PembayaranState extends State<Pembayaran> {
                     color: Color(0xFF172033),
                   ),
                 ),
-
                 const SizedBox(height: 3),
-
                 const Text(
                   'Motor | 1 Hari (24 Jam)',
                   style: TextStyle(fontSize: 9, color: Color(0xFF172033)),
                 ),
-
                 const SizedBox(height: 5),
-
                 RichText(
                   text: const TextSpan(
                     children: [
@@ -223,9 +242,7 @@ class _PembayaranState extends State<Pembayaran> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 7),
-
                 Container(
                   width: double.infinity,
                   height: 25,
@@ -247,7 +264,6 @@ class _PembayaranState extends State<Pembayaran> {
     );
   }
 
-  // METODE PEMBAYARAN
   Widget paymentOption({
     required String title,
     required String subtitle,
@@ -293,9 +309,7 @@ class _PembayaranState extends State<Pembayaran> {
               ),
               child: Icon(icon, color: const Color(0xFF172033), size: 21),
             ),
-
             const SizedBox(width: 12),
-
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -309,9 +323,7 @@ class _PembayaranState extends State<Pembayaran> {
                       color: Color(0xFF172033),
                     ),
                   ),
-
                   const SizedBox(height: 2),
-
                   Text(
                     subtitle,
                     style: const TextStyle(
@@ -322,7 +334,6 @@ class _PembayaranState extends State<Pembayaran> {
                 ],
               ),
             ),
-
             Container(
               width: 20,
               height: 20,
@@ -346,7 +357,6 @@ class _PembayaranState extends State<Pembayaran> {
     );
   }
 
-  // RINCIAN PEMBAYARAN
   Widget paymentDetailCard() {
     return Container(
       width: double.infinity,
@@ -374,12 +384,10 @@ class _PembayaranState extends State<Pembayaran> {
               color: Color(0xFF172033),
             ),
           ),
-
           const SizedBox(height: 12),
-
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Harga Sewa',
                 style: TextStyle(fontSize: 10, color: Color(0xFF172033)),
@@ -390,12 +398,10 @@ class _PembayaranState extends State<Pembayaran> {
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Biaya Layanan',
                 style: TextStyle(fontSize: 10, color: Color(0xFF172033)),
@@ -406,9 +412,7 @@ class _PembayaranState extends State<Pembayaran> {
               ),
             ],
           ),
-
           const SizedBox(height: 14),
-
           Container(
             width: double.infinity,
             height: 42,

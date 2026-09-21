@@ -1,18 +1,56 @@
 import 'package:flutter/material.dart';
 
-class Beranda extends StatelessWidget {
+class Beranda extends StatefulWidget {
   const Beranda({super.key});
+
+  @override
+  State<Beranda> createState() => _BerandaState();
+}
+
+class _BerandaState extends State<Beranda> {
+  final TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, dynamic>> get filteredVehicles {
+    if (searchQuery.isEmpty) return vehicles;
+
+    return vehicles.where((vehicle) {
+      return vehicle['name'].toString().toLowerCase().contains(
+        searchQuery.toLowerCase(),
+      );
+    }).toList();
+  }
+
+  void goToProfile() {
+    Navigator.pushNamed(context, '/Profile');
+  }
+
+  void goToMotor() {
+    Navigator.pushNamed(context, '/Motor_Page');
+  }
+
+  void goToMobil() {
+    Navigator.pushNamed(context, '/Mobil_Page');
+  }
+
+  void goToRiwayat() {
+    Navigator.pushNamed(context, '/Riwayat');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFEAF4FC),
-
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             final double screenWidth = constraints.maxWidth;
-
             final bool isMobile = screenWidth < 600;
             final bool isTablet = screenWidth >= 600 && screenWidth < 1000;
             final bool isDesktop = screenWidth >= 1000;
@@ -30,7 +68,6 @@ class Beranda extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // HEADER
                       Padding(
                         padding: EdgeInsets.fromLTRB(
                           isMobile ? 20 : 30,
@@ -73,33 +110,41 @@ class Beranda extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            Container(
-                              width: isMobile ? 45 : 50,
-                              height: isMobile ? 45 : 50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: const Color(0xFF172033),
-                                  width: 2,
+                            GestureDetector(
+                              onTap: goToProfile,
+                              child: Container(
+                                width: isMobile ? 45 : 50,
+                                height: isMobile ? 45 : 50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFF172033),
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              child: Icon(
-                                Icons.person_outline,
-                                size: isMobile ? 30 : 32,
-                                color: const Color(0xFF172033),
+                                child: Icon(
+                                  Icons.person_outline,
+                                  size: isMobile ? 30 : 32,
+                                  color: const Color(0xFF172033),
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                      // SEARCH
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 20 : 30,
                           vertical: 5,
                         ),
                         child: TextField(
+                          controller: searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              searchQuery = value;
+                            });
+                          },
                           decoration: InputDecoration(
                             hintText: 'Cari motor atau mobil...',
                             hintStyle: TextStyle(
@@ -110,6 +155,17 @@ class Beranda extends StatelessWidget {
                               Icons.search,
                               color: Colors.grey,
                             ),
+                            suffixIcon: searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () {
+                                      searchController.clear();
+                                      setState(() {
+                                        searchQuery = '';
+                                      });
+                                    },
+                                  )
+                                : null,
                             filled: true,
                             fillColor: Colors.white,
                             contentPadding: const EdgeInsets.symmetric(
@@ -123,7 +179,6 @@ class Beranda extends StatelessWidget {
                         ),
                       ),
 
-                      // BANNER
                       Padding(
                         padding: EdgeInsets.fromLTRB(
                           isMobile ? 20 : 30,
@@ -150,7 +205,6 @@ class Beranda extends StatelessWidget {
                         ),
                       ),
 
-                      // RENTAL MOTOR & MOBIL
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 20 : 30,
@@ -158,27 +212,32 @@ class Beranda extends StatelessWidget {
                         child: Row(
                           children: [
                             Expanded(
-                              child: rentalButton(
-                                image: 'assets/images/RentalMotor.png',
-                                title: 'Motor',
-                                isMobile: isMobile,
-                                isDesktop: isDesktop,
+                              child: GestureDetector(
+                                onTap: goToMotor,
+                                child: rentalButton(
+                                  image: 'assets/images/RentalMotor.png',
+                                  title: 'Motor',
+                                  isMobile: isMobile,
+                                  isDesktop: isDesktop,
+                                ),
                               ),
                             ),
                             SizedBox(width: isMobile ? 15 : 20),
                             Expanded(
-                              child: rentalButton(
-                                image: 'assets/images/RentalMobil.png',
-                                title: 'Mobil',
-                                isMobile: isMobile,
-                                isDesktop: isDesktop,
+                              child: GestureDetector(
+                                onTap: goToMobil,
+                                child: rentalButton(
+                                  image: 'assets/images/RentalMobil.png',
+                                  title: 'Mobil',
+                                  isMobile: isMobile,
+                                  isDesktop: isDesktop,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                      // MOST POPULAR
                       Padding(
                         padding: EdgeInsets.fromLTRB(
                           isMobile ? 20 : 30,
@@ -197,54 +256,86 @@ class Beranda extends StatelessWidget {
                                 color: const Color(0xFF172033),
                               ),
                             ),
-                            Text(
-                              'Lihat Semua ›',
-                              style: TextStyle(
-                                fontSize: isMobile ? 12 : 14,
-                                color: Colors.grey,
+                            GestureDetector(
+                              onTap: goToMotor,
+                              child: Text(
+                                'Lihat Semua ›',
+                                style: TextStyle(
+                                  fontSize: isMobile ? 12 : 14,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                      // DAFTAR KENDARAAN
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 20 : 30,
                         ),
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: vehicles.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: isMobile
-                                    ? 2
-                                    : isTablet
-                                    ? 3
-                                    : 4,
-                                crossAxisSpacing: isMobile ? 12 : 18,
-                                mainAxisSpacing: isMobile ? 12 : 18,
-                                childAspectRatio: isMobile
-                                    ? 1.45
-                                    : isTablet
-                                    ? 1.55
-                                    : 1.65,
-                              ),
-                          itemBuilder: (context, index) {
-                            final vehicle = vehicles[index];
+                        child: filteredVehicles.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 40),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.search_off,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'Kendaraan tidak ditemukan',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: filteredVehicles.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: isMobile
+                                          ? 2
+                                          : isTablet
+                                          ? 3
+                                          : 4,
+                                      crossAxisSpacing: isMobile ? 12 : 18,
+                                      mainAxisSpacing: isMobile ? 12 : 18,
+                                      childAspectRatio: isMobile
+                                          ? 1.45
+                                          : isTablet
+                                          ? 1.55
+                                          : 1.65,
+                                    ),
+                                itemBuilder: (context, index) {
+                                  final vehicle = filteredVehicles[index];
 
-                            return vehicleCard(
-                              name: vehicle['name'],
-                              price: vehicle['price'],
-                              image: vehicle['image'],
-                              available: vehicle['available'],
-                              isMobile: isMobile,
-                              isDesktop: isDesktop,
-                            );
-                          },
-                        ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        vehicle['type'] == 'motor'
+                                            ? '/Spesifikasi_Motor'
+                                            : '/Spesifikasi_Mobil',
+                                      );
+                                    },
+                                    child: vehicleCard(
+                                      name: vehicle['name'],
+                                      price: vehicle['price'],
+                                      image: vehicle['image'],
+                                      available: vehicle['available'],
+                                      isMobile: isMobile,
+                                      isDesktop: isDesktop,
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
 
                       const SizedBox(height: 30),
@@ -257,13 +348,19 @@ class Beranda extends StatelessWidget {
         ),
       ),
 
-      // BOTTOM NAVIGATION
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         selectedItemColor: Colors.amber.shade600,
         unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          if (index == 1) {
+            goToRiwayat();
+          } else if (index == 2) {
+            goToProfile();
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
@@ -460,51 +557,46 @@ Widget vehicleCard({
 }
 
 final List<Map<String, dynamic>> vehicles = [
-  // MOTOR
   {
     'name': 'HONDA SCOOPY',
     'price': 'Rp150.000/day',
     'image': 'assets/images/Honda Scoopy.png',
     'available': true,
+    'type': 'motor',
   },
-
-  // MOBIL
   {
     'name': 'AVANZA',
     'price': 'Rp350.000/day',
     'image': 'assets/images/Avanza.png',
     'available': true,
+    'type': 'mobil',
   },
-
-  // MOTOR
   {
     'name': 'BEAT STREET',
     'price': 'Rp110.000/day',
     'image': 'assets/images/Beat Street.png',
     'available': false,
+    'type': 'motor',
   },
-
-  // MOTOR
   {
     'name': 'VARIO 160',
     'price': 'Rp125.000/day',
     'image': 'assets/images/Vario Evo 150.png',
     'available': true,
+    'type': 'motor',
   },
-
-  // MOBIL
   {
     'name': 'FORTUNER',
     'price': 'Rp400.000/day',
     'image': 'assets/images/Honda Fortuner.png',
     'available': true,
+    'type': 'mobil',
   },
-
-  // MOBIL
   {
     'name': 'INNOVA REBORN',
     'price': 'Rp350.000/day',
     'image': 'assets/images/Inova Reborn.png',
     'available': true,
+    'type': 'mobil',
   },
 ];
