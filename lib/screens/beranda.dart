@@ -567,7 +567,7 @@ final List<Map<String, dynamic>> vehicles = [
   {
     'name': 'AVANZA',
     'price': 'Rp350.000/day',
-    'image': 'assets/images/Avanza.png',
+    'image': 'assets/images/avanza.png',
     'available': true,
     'type': 'mobil',
   },
